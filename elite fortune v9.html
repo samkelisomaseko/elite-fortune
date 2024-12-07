@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elite Fortune - Luxury Wheel Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&family=Audiowide&family=Syncopate:wght@400;700&family=Quantico:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #ffd700;
+            --secondary-color: #1a2e1a;
+            --text-color: #ffffff;
+            --accent-color: #ff4500;
+            --background-gradient: linear-gradient(135deg, #1a2e1a, #0a3d62);
+            --card-background: rgba(255, 255, 255, 0.1);
+            --card-border: rgba(255, 255, 255, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background: var(--background-gradient);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-family: 'Audiowide', cursive;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            color: var(--primary-color);
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        main {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 5rem 0 4rem;
+            overflow-y: auto;
+        }
+
+        h1, h2, h3 {
+            font-size: clamp(1.5rem, 3vw, 2.5rem);
+            text-align: center;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .prize-text {
+            font-size: clamp(1rem, 2vw, 1.5rem);
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+        }
+
+        .wheel-container {
+            width: clamp(250px, 80vw, 400px);
+            height: clamp(250px, 80vw, 400px);
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            transition: transform 5s cubic-bezier(0.25, 0.1, 0.25, 1);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .wheel-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20%;
+            height: 20%;
+            background-color: var(--secondary-color);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            color: var(--primary-color);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .wheel-pointer {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 40px solid var(--accent-color);
+            filter: drop-shadow(0 0 5px rgba(255, 69, 0, 0.5));
+        }
+
+        .spin-button {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: clamp(1rem, 2.5vw, 1.5rem);
+            padding: 0.5em 1em;
+            background-color: var(--accent-color);
+            color: var(--text-color);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(255, 69, 0, 0.5);
+        }
+
+        .spin-button:hover {
+            background-color: #ff6347;
+            transform: scale(1.05);
+        }
+
+        .spin-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            transform: scale(1);
+        }
+
+        .timer {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            margin-top: 1rem;
+            color: var(--primary-color);
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 1rem;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .tab {
+            font-family: 'Syncopate', sans-serif;
+            font-size: clamp(0.7rem, 2vw, 1rem);
+            color: var(--text-color);
+            text-decoration: none;
+            padding: 0.5em;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .tab:hover, .tab.active {
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            transform: translateY(-5px);
+        }
+
+        .tab-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 2rem;
+            background-color: var(--card-background);
+            border-radius: 10px;
+            margin-top: 2rem;
+            width: 100%;
+            max-width: 800px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--card-border);
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .leaderboard {
+            width: 100%;
+            max-width: 600px;
+            margin-top: 2rem;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            margin-bottom: 0.5rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .leaderboard-item:hover {
+            transform: scale(1.02);
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .share-button {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
+            padding: 0.5em 1em;
+            background-color: #4267B2;
+            color: var(--text-color);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .share-button:hover {
+            background-color: #365899;
+            transform: scale(1.05);
+        }
+
+        .scratch-card {
+            width: 200px;
+            height: 100px;
+            background-color: var(--primary-color);
+            position: relative;
+            overflow: hidden;
+            margin-top: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+
+        .scratch-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ccc;
+            background-image: linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc),
+                              linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc);
+            background-size: 10px 10px;
+            background-position: 0 0, 5px 5px;
+        }
+
+        .scratch-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+            font-weight: bold;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: var(--secondary-color);
+            padding: 1rem;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            z-index: 2000;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slider-container {
+            margin-top: 1rem;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 10px;
+            border-radius: 5px;
+            background: #d3d3d3;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity .2s;
+        }
+
+        .slider:hover {
+            opacity: 1;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group input[type="email"],
+        .form-group select {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 5px;
+            border: 1px solid var(--card-border);
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+        }
+
+        .btn {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
+            padding: 0.5em 1em;
+            background-color: var(--accent-color);
+            color: var(--text-color);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #ff6347;
+            transform: scale(1.05);
+        }
+
+        .active-games {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .game-room {
+            background-color: var(--card-background);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .game-room:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
+        }
+
+        .game-room h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .game-room p {
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 600px) {
+            .tabs {
+                justify-content: space-between;
+            }
+
+            .tab {
+                flex: 1;
+                font-size: 0;
+            }
+
+            .tab-icon {
+                font-size: 1.5rem;
+                margin-bottom: 0;
+            }
+
+            .tab-content {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Elite Fortune</div>
+    </header>
+
+    <main>
+        <div id="gameTab" class="tab-content active">
+            <h1>Spin the Wheel of Fortune!</h1>
+            <p class="prize-text">You could win up to <span style="color: var(--primary-color);">E10,000</span>!</p>
+
+            <div class="wheel-container">
+                <div class="wheel"></div>
+                <div class="wheel-center">SPIN</div>
+                <div class="wheel-pointer"></div>
+            </div>
+
+            <button class="spin-button" onclick="spinWheel()">SPIN NOW</button>
+            <div class="timer" id="timer"></div>
+
+            <h2>Game Lobby</h2>
+            <div id="activeGames" class="active-games"></div>
+        </div>
+
+        <div id="profileTab" class="tab-content">
+            <h2>Player Profile</h2>
+            <div id="playerInfo"></div>
+            <h3>Your Achievements</h3>
+            <div id="achievements"></div>
+            <h3>Daily Scratch Card</h3>
+            <div class="scratch-card">
+                <div class="scratch-overlay"></div>
+                <div class="scratch-content"></div>
+            </div>
+            <h3>Update Profile</h3>
+            <form id="profileForm">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="avatar">Avatar:</label>
+                    <select id="avatar" name="avatar">
+                        <option value="default">Default</option>
+                        <option value="cool">Cool</option>
+                        <option value="lucky">Lucky</option>
+                        <option value="winner">Winner</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn">Update Profile</button>
+            </form>
+        </div>
+
+        <div id="settingsTab" class="tab-content">
+            <h2>Game Settings</h2>
+            <div class="slider-container">
+                <label for="soundEffects">Sound Effects:</label>
+                <input type="range" id="soundEffects" class="slider" min="0" max="100" value="50">
+            </div>
+            <div class="slider-container">
+                <label for="music">Background Music:</label>
+                <input type="range" id="music" class="slider" min="0" max="100" value="50">
+            </div>
+            <div class="form-group">
+                <label for="notifications">Enable Notifications:</label>
+                <input type="checkbox" id="notifications" checked>
+            </div>
+            <div class="form-group">
+                <label for="theme">Theme:</label>
+                <select id="theme" name="theme">
+                    <option value="default">Default</option>
+                    <option value="dark">Dark</option>
+                    <option value="light">Light</option>
+                </select>
+            </div>
+            <button class="btn" onclick="saveSettings()">Save Settings</button>
+        </div>
+
+        <div id="accountTab" class="tab-content">
+            <h2>Account Information</h2>
+            <div id="accountInfo"></div>
+            <h3>Transaction History</h3>
+            <div id="transactionHistory"></div>
+            <h3>Deposit</h3>
+            <form id="depositForm">
+                <div class="form-group">
+                    <label for="depositAmount">Amount:</label>
+                    <input type="number" id="depositAmount" name="depositAmount" min="1" required>
+                </div>
+                <button type="submit" class="btn">Deposit</button>
+            </form>
+            <h3>Withdraw</h3>
+            <form id="withdrawForm">
+                <div class="form-group">
+                    <label for="withdrawAmount">Amount:</label>
+                    <input type="number" id="withdrawAmount" name="withdrawAmount" min="1" required>
+                </div>
+                <button type="submit" class="btn">Withdraw</button>
+            </form>
+        </div>
+
+        <div id="leaderboardTab" class="tab-content">
+            <h2>Leaderboard</h2>
+            <div class="leaderboard" id="leaderboard"></div>
+        </div>
+    </main>
+
+    <nav class="tabs">
+        <a href="#" class="tab active" data-tab="game">
+            <span class="tab-icon">🎰</span>
+            <span class="tab-text">Game</span>
+        </a>
+        <a href="#" class="tab" data-tab="profile">
+            <span class="tab-icon">👤</span>
+            <span class="tab-text">Profile</span>
+        </a>
+        <a href="#" class="tab" data-tab="settings">
+            <span class="tab-icon">⚙️</span>
+            <span class="tab-text">Settings</span>
+        </a>
+        <a href="#" class="tab" data-tab="account">
+            <span class="tab-icon">💰</span>
+            <span class="tab-text">Account</span>
+        </a>
+        <a href="#" class="tab" data-tab="leaderboard">
+            <span class="tab-icon">🏆</span>
+            <span class="tab-text">Leaderboard</span>
+        </a>
+    </nav>
+
+    <div class="notification" id="notification"></div>
+
+    <audio id="spinSound" src="https://assets.mixkit.co/sfx/preview/mixkit-slot-machine-spin-1930.mp3"></audio>
+    <audio id="winSound" src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3"></audio>
+
+    <script>
+        const wheel = document.querySelector('.wheel');
+        const spinButton = document.querySelector('.spin-button');
+        const timerDisplay = document.getElementById('timer');
+        const spinSound = document.getElementById('spinSound');
+        const winSound = document.getElementById('winSound');
+        const notification = document.getElementById('notification');
+        let isSpinning = false;
+
+        const segments = [
+            { value: 'E10', color: '#ffd700' },
+            { value: '1 SPIN', color: '#4169e1' },
+            { value: 'E2', color: '#ffd700' },
+            { value: 'E50', color: '#4169e1' },
+            { value: 'E1', color: '#ffd700' },
+            { value: 'E5', color: '#4169e1' },
+            { value: 'E15', color: '#ffd700' },
+            { value: 'JACKPOT', color: '#4169e1' },
+            { value: 'E100', color: '#ffd700' },
+            { value: 'E15', color: '#4169e1' },
+            { value: 'E20', color: '#ffd700' },
+            { value: 'E5', color: '#4169e1' }
+        ];
+
+        function spinWheel() {
+            if (isSpinning) return;
+            isSpinning = true;
+            spinButton.disabled = true;
+
+            spinSound.play();
+
+            const rotation = 3600 + Math.floor(Math.random() * 360);
+            wheel.style.transform = `rotate(${rotation}deg)`;
+
+            setTimeout(() => {
+                isSpinning = false;
+                spinButton.disabled = false;
+                const winningIndex = Math.floor((360 - (rotation % 360)) / (360 / segments.length));
+                const winningSegment = segments[winningIndex];
+                winSound.play();
+                showNotification(`You won ${winningSegment.value}!`);
+                updateUserData(winningSegment.value);
+                updateLeaderboard();
+            }, 5000);
+        }
+
+        function showNotification(message) {
+            notification.textContent = message;
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function startTimer(duration, display) {
+            let timer = duration, minutes, seconds;
+            let countdown = setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                display.textContent = `Time left: ${minutes}:${seconds}`;
+
+                if (--timer < 0) {
+                    clearInterval(countdown);
+                    display.textContent = "Time's up!";
+                    spinButton.disabled = true;
+                }
+            }, 1000);
+        }
+
+        // Tab functionality
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                e.preventDefault();
+                const tabId = tab.getAttribute('data-tab');
+
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+
+                tab.classList.add('active');
+                document.getElementById(`${tabId}Tab`).classList.add('active');
+
+                // iOS-like animation
+                animateTabTransition(document.querySelector('.tab-content.active'), document.getElementById(`${tabId}Tab`));
+            });
+        });
+
+        // Add wheel segments dynamically
+        function createWheelSegments() {
+            const segmentAngle = 360 / segments.length;
+            let cumulativeAngle = 0;
+            let wheelContent = '';
+
+            segments.forEach((segment, index) => {
+                const startAngle = cumulativeAngle;
+                const endAngle = cumulativeAngle + segmentAngle;
+                wheelContent += `
+                    <div class="wheel-segment" style="
+                        transform: rotate(${startAngle}deg);
+                        background-color: ${segment.color};
+                        clip-path: polygon(0 0, 100% 0, 50% 100%);
+                        width: 50%;
+                        height: 50%;
+                        position: absolute;
+                        top: 0;
+                        left: 25%;
+                        transform-origin: bottom center;
+                    ">
+                        <span style="
+                            position: absolute;
+                            top: 20px;
+                            left: 50%;
+                            transform: translateX(-50%) rotate(${90 + segmentAngle / 2}deg);
+                            font-size: 12px;
+                            font-weight: bold;
+                            color: ${segment.color === '#ffd700' ? '#000' : '#fff'};
+                        ">${segment.value}</span>
+                    </div>
+                `;
+                cumulativeAngle += segmentAngle;
+            });
+
+            wheel.innerHTML = wheelContent;
+        }
+
+        createWheelSegments();
+
+        // Backend simulation using localStorage
+        function initializeUserData() {
+            if (!localStorage.getItem('userData')) {
+                localStorage.setItem('userData', JSON.stringify({
+                    username: 'Player' + Math.floor(Math.random() * 1000),
+                    email: '',
+                    avatar: 'default',
+                    balance: 1000,
+                    wins: 0,
+                    transactions: [],
+                    settings: {
+                        soundEffects: 50,
+                        music: 50,
+                        notifications: true,
+                        theme: 'default',
+                        language: 'en'
+                    }
+                }));
+            }
+        }
+
+        function getUserData() {
+            return JSON.parse(localStorage.getItem('userData'));
+        }
+
+        function updateUserData(prize) {
+            let userData = getUserData();
+            if (prize !== '1 SPIN') {
+                const amount = parseInt(prize.slice(1));
+                userData.balance += amount;
+                userData.wins += 1;
+                userData.transactions.push({
+                    type: 'Win',
+                    amount: amount,
+                    date: new Date().toISOString()
+                });
+            }
+            localStorage.setItem('userData', JSON.stringify(userData));
+            updateProfileTab();
+            updateAccountTab();
+        }
+
+        function updateProfileTab() {
+            const userData = getUserData();
+            document.getElementById('playerInfo').innerHTML = `
+                <p>Username: ${userData.username}</p>
+                <p>Email: ${userData.email}</p>
+                <p>Avatar: ${userData.avatar}</p>
+                <p>Total Wins: ${userData.wins}</p>
+            `;
+            document.getElementById('achievements').innerHTML = `
+                <p>🏆 Big Winner (Win over E100): ${userData.wins > 0 ? 'Unlocked' : 'Locked'}</p>
+                <p>🎰 Frequent Spinner (Spin 10 times): ${userData.transactions.length >= 10 ? 'Unlocked' : 'Locked'}</p>
+            `;
+
+            // Populate profile form
+            document.getElementById('username').value = userData.username;
+            document.getElementById('email').value = userData.email;
+            document.getElementById('avatar').value = userData.avatar;
+        }
+
+        function updateAccountTab() {
+            const userData = getUserData();
+            document.getElementById('accountInfo').innerHTML = `
+                <p>Current Balance: E${userData.balance}</p>
+            `;
+            let transactionHistory = '<ul>';
+            userData.transactions.slice(-5).forEach(transaction => {
+                transactionHistory += `<li>${transaction.type}: E${transaction.amount} (${new Date(transaction.date).toLocaleString()})</li>`;
+            });
+            transactionHistory += '</ul>';
+            document.getElementById('transactionHistory').innerHTML = transactionHistory;
+        }
+
+        function updateLeaderboard() {
+            // In a real application, this would fetch data from a server
+            const leaderboardData = [
+                { username: 'Player123', score: 5000 },
+                { username: 'Winner456', score: 4500 },
+                { username: 'LuckyGuy', score: 4000 },
+                { username: 'FortuneSeeker', score: 3500 },
+                { username: getUserData().username, score: getUserData().balance }
+            ].sort((a, b) => b.score - a.score);
+
+            let leaderboardHTML = '';
+            leaderboardData.forEach((player, index) => {
+                leaderboardHTML += `
+                    <div class="leaderboard-item">
+                        <span>${index + 1}. ${player.username}</span>
+                        <span>E${player.score}</span>
+                    </div>
+                `;
+            });
+            document.getElementById('leaderboard').innerHTML = leaderboardHTML;
+        }
+
+        function initializeGameLobby() {
+            const activeGames = [
+                { name: 'High Rollers', players: 3, maxPlayers: 5 },
+                { name: 'Newbie Room', players: 2, maxPlayers: 10 },
+                { name: 'VIP Lounge', players: 1, maxPlayers: 3 }
+            ];
+
+            let lobbyHTML = '';
+            activeGames.forEach(game => {
+                lobbyHTML += `
+                    <div class="game-room">
+                        <h3>${game.name}</h3>
+                        <p>${game.players}/${game.maxPlayers} players</p>
+                        <button class="btn" onclick="joinGame('${game.name}')">Join</button>
+                    </div>
+                `;
+            });
+            document.getElementById('activeGames').innerHTML = lobbyHTML;
+        }
+
+        function joinGame(gameName) {
+            showNotification(`Joining ${gameName}...`);
+            // Here you would implement the logic to join the game
+            // For now, we'll just update the game room to show the player has joined
+            const gameRooms = document.querySelectorAll('.game-room');
+            gameRooms.forEach(room => {
+                if (room.querySelector('h3').textContent === gameName) {
+                    const playersElement = room.querySelector('p');
+                    const [current, max] = playersElement.textContent.split('/');
+                    playersElement.textContent = `${parseInt(current) + 1}/${max} players`;
+                }
+            });
+        }
+
+        function initializeScratchCard() {
+            const scratchCard = document.querySelector('.scratch-card');
+            const scratchOverlay = document.querySelector('.scratch-overlay');
+            const scratchContent = document.querySelector('.scratch-content');
+
+            let isScratching = false;
+            let scratchedPercentage = 0;
+
+            scratchContent.textContent = 'You won E5!';
+
+            scratchOverlay.addEventListener('mousedown', startScratching);
+            scratchOverlay.addEventListener('mousemove', scratch);
+            scratchOverlay.addEventListener('mouseup', stopScratching);
+            scratchOverlay.addEventListener('mouseleave', stopScratching);
+
+            scratchOverlay.addEventListener('touchstart', startScratching);
+            scratchOverlay.addEventListener('touchmove', scratch);
+            scratchOverlay.addEventListener('touchend', stopScratching);
+
+            function startScratching(e) {
+                isScratching = true;
+                scratch(e);
+            }
+
+            function stopScratching() {
+                isScratching = false;
+            }
+
+            function scratch(e) {
+                if (!isScratching) return;
+
+                const rect = scratchOverlay.getBoundingClientRect();
+                const x = (e.clientX || e.touches[0].clientX) - rect.left;
+                const y = (e.clientY || e.touches[0].clientY) - rect.top;
+
+                const ctx = scratchOverlay.getContext('2d');
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.beginPath();
+                ctx.arc(x, y, 10, 0, 2 * Math.PI);
+                ctx.fill();
+
+                scratchedPercentage += 1;
+                if (scratchedPercentage >= 50) {
+                    scratchOverlay.style.display = 'none';
+                    updateUserData('E5');
+                    showNotification('You won E5 from the scratch card!');
+                }
+            }
+
+            if (!scratchOverlay.getContext) {
+                const canvas = document.createElement('canvas');
+                canvas.width = scratchCard.offsetWidth;
+                canvas.height = scratchCard.offsetHeight;
+                scratchOverlay.appendChild(canvas);
+                scratchOverlay = canvas;
+            }
+        }
+
+        // Social sharing
+        function shareOnFacebook() {
+            const userData = getUserData();
+            const shareText = `I just won E${userData.balance} playing Elite Fortune! Join me and try your luck!`;
+            const shareUrl = 'https://elitefortune.com'; // Replace with your actual URL
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${encodeURIComponent(shareText)}`, '_blank');
+        }
+
+        // Profile update
+        document.getElementById('profileForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const userData = getUserData();
+            userData.username = document.getElementById('username').value;
+            userData.email = document.getElementById('email').value;
+            userData.avatar = document.getElementById('avatar').value;
+            localStorage.setItem('userData', JSON.stringify(userData));
+            showNotification('Profile updated successfully!');
+            updateProfileTab();
+        });
+
+        // Deposit and Withdraw
+        document.getElementById('depositForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const amount = parseInt(document.getElementById('depositAmount').value);
+            const userData = getUserData();
+            userData.balance += amount;
+            userData.transactions.push({
+                type: 'Deposit',
+                amount: amount,
+                date: new Date().toISOString()
+            });
+            localStorage.setItem('userData', JSON.stringify(userData));
+            showNotification(`Successfully deposited E${amount}`);
+            updateAccountTab();
+        });
+
+        document.getElementById('withdrawForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const amount = parseInt(document.getElementById('withdrawAmount').value);
+            const userData = getUserData();
+            if (amount > userData.balance) {
+                showNotification('Insufficient funds for withdrawal');
+                return;
+            }
+            userData.balance -= amount;
+            userData.transactions.push({
+                type: 'Withdrawal',
+                amount: amount,
+                date: new Date().toISOString()
+            });
+            localStorage.setItem('userData', JSON.stringify(userData));
+            showNotification(`Successfully withdrew E${amount}`);
+            updateAccountTab();
+        });
+
+        // Settings
+        function saveSettings() {
+            const userData = getUserData();
+            userData.settings.soundEffects = parseInt(document.getElementById('soundEffects').value);
+            userData.settings.music = parseInt(document.getElementById('music').value);
+            userData.settings.notifications = document.getElementById('notifications').checked;
+            userData.settings.theme = document.getElementById('theme').value;
+            userData.settings.language = document.getElementById('language').value;
+            localStorage.setItem('userData', JSON.stringify(userData));
+            showNotification('Settings saved successfully!');
+            applySettings();
+        }
+
+        function applySettings() {
+            const userData = getUserData();
+            document.getElementById('soundEffects').value = userData.settings.soundEffects;
+            document.getElementById('music').value = userData.settings.music;
+            document.getElementById('notifications').checked = userData.settings.notifications;
+            document.getElementById('theme').value = userData.settings.theme;
+            document.getElementById('language').value = userData.settings.language;
+            
+            // Apply theme
+            document.body.className = userData.settings.theme;
+        }
+
+        // Initialize everything
+        window.onload = function () {
+            let twoMinutes = 60 * 2;
+            startTimer(twoMinutes, timerDisplay);
+            initializeUserData();
+            updateProfileTab();
+            updateAccountTab();
+            updateLeaderboard();
+            initializeGameLobby();
+            initializeScratchCard();
+            applySettings();
+        };
+
+        // Add some animations using GSAP
+        gsap.from('.logo', { duration: 1, y: -50, opacity: 0, ease: 'bounce' });
+        gsap.from('.wheel-container', { duration: 1, scale: 0.5, opacity: 0, ease: 'back' });
+        gsap.from('.spin-button', { duration: 0.5, y: 50, opacity: 0, ease: 'power2', delay: 0.5 });
+
+        // iOS-like animations for tab switching
+        function animateTabTransition(oldTab, newTab) {
+            gsap.to(oldTab, { duration: 0.3, opacity: 0, x: -20, ease: 'power2.in' });
+            gsap.fromTo(newTab, 
+                { opacity: 0, x: 20 },
+                { duration: 0.3, opacity: 1, x: 0, ease: 'power2.out', delay: 0.2 }
+            );
+        }
+
+        // Enhance slider functionality
+        const sliders = document.querySelectorAll('.slider');
+        sliders.forEach(slider => {
+            slider.addEventListener('input', function() {
+                const value = this.value;
+                const min = this.min ? this.min : 0;
+                const max = this.max ? this.max : 100;
+                const newVal = Number(((value - min) * 100) / (max - min));
+                this.style.background = `linear-gradient(to right, var(--primary-color) 0%, var(--primary-color) ${newVal}%, #d3d3d3 ${newVal}%, #d3d3d3 100%)`;
+            });
+        });
+    </script>
+</body>
+</html>
