@@ -1,1 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elite Fortune - Gateway to Excellence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;600&family=Rajdhani:wght@400;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Root variables for consistent theme */
+        :root {
+            --primary-color: #ffd700;
+            --secondary-color: #1a2e1a;
+            --accent-color: #ff4500;
+            --text-light: #ffffff;
+            --background-gradient: radial-gradient(circle, #0a3d62, #1a2e1a 70%);
+            --card-bg: rgba(255, 255, 255, 0.1);
+            --border-light: rgba(255, 255, 255, 0.3);
+            --shadow-strong: 0 4px 15px rgba(0, 0, 0, 0.6);
+        }
 
+        /* Global Reset and Styling */
+        body {
+            margin: 0;
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--background-gradient);
+            color: var(--text-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 700px;
+            text-align: center;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.75);
+            border-radius: 15px;
+            box-shadow: var(--shadow-strong);
+        }
+
+        /* Header Section */
+        .header {
+            margin-bottom: 2rem;
+        }
+
+        .header .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            color: var(--primary-color);
+           
+        }
+
+        .header .tagline {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.2rem;
+            color: var(--text-light);
+        }
+
+        /* Tabs Section */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tab-btn {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+            background: none;
+            color: var(--text-light);
+            border: 2px solid transparent;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .tab-btn:hover {
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+
+        .tab-btn.active {
+            border-color: var(--primary-color);
+            background: var(--primary-color);
+            color: var(--secondary-color);
+        }
+
+        /* Forms Section */
+        .form {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .form.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .form input {
+            width: 90%;
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            border: none;
+            border-radius: 10px;
+            background: var(--card-bg);
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        .form input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .form button {
+            padding: 0.8rem 2rem;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.2rem;
+            color: var(--text-light);
+            background: var(--accent-color);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: var(--shadow-strong);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .form button:hover {
+            background: #ff6347;
+            transform: scale(1.05);
+        }
+
+        /* Footer Section */
+        .footer {
+            margin-top: 2rem;
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+
+        .social-icons a {
+            font-size: 1.5rem;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: color 0.3s ease-in-out;
+        }
+
+        .social-icons a:hover {
+            color: var(--primary-color);
+        }
+
+        .footer p {
+            margin-top: 1rem;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1 class="logo">Elite Fortune</h1>
+            <p class="tagline">Your Gateway to Ultimate Gaming and Rewards</p>
+        </header>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="login">Login</button>
+            <button class="tab-btn" data-tab="signup">Sign Up</button>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" class="form active">
+            <input type="email" placeholder="Email Address" required>
+            <input type="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+
+        <!-- Sign-Up Form -->
+        <form id="signupForm" class="form">
+            <input type="text" placeholder="Username" required>
+            <input type="email" placeholder="Email Address" required>
+            <input type="password" placeholder="Password" required>
+            <button type="submit">Sign Up</button>
+        </form>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="social-icons">
+                <a href="#" class="icon">Twitter</a>
+                <a href="#" class="icon">Facebook</a>
+                <a href="#" class="icon">Instagram</a>
+            </div>
+            <p>© 2024 Elite Fortune. All Rights Reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Tab Switching Logic
+        const tabs = document.querySelectorAll(".tab-btn");
+        const forms = document.querySelectorAll(".form");
+
+        tabs.forEach((tab) => {
+            tab.addEventListener("click", () => {
+                // Remove active class from all tabs and forms
+                tabs.forEach((btn) => btn.classList.remove("active"));
+                forms.forEach((form) => form.classList.remove("active"));
+
+                // Add active class to clicked tab and its associated form
+                tab.classList.add("active");
+                document
+                    .querySelector(`#${tab.dataset.tab}Form`)
+                    .classList.add("active");
+            });
+        });
+
+        // Mock Login Form Submission
+        document.getElementById("loginForm").addEventListener("submit", (e) => {
+            e.preventDefault();
+            alert("Login successful!");
+            window.location.href = "home.html";
+        });
+
+        // Mock Sign-Up Form Submission
+        document.getElementById("signupForm").addEventListener("submit", (e) => {
+            e.preventDefault();
+            alert("Sign-Up successful! Redirecting to home...");
+            window.location.href = "home.html";
+        });
+    </script>
+</body>
+  </html>
